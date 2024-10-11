@@ -1,5 +1,6 @@
+
 export class CreateAnswerDto {
-    questionnaireId: number; // ID del cuestionario al que pertenece
-    answerText: string;
-  }
-  
+
+  questionnaireId: string; // Almacenado como string
+  answerText: string; // Almacenado como string
+}

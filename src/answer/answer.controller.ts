@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AnswerService } from './answer.service';
+import { Controller, Get, Post, Body, Put, Param, Delete, NotFoundException } from '@nestjs/common';
+import { AnswersService } from './answer.service';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
 
-@Controller('answer')
-export class AnswerController {
-  constructor(private readonly answerService: AnswerService) {}
+@Controller('answers')
+export class AnswersController {
+  constructor(private readonly answersService: AnswersService) {}
 
+  // Crear una respuesta
   @Post()
   create(@Body() createAnswerDto: CreateAnswerDto) {
-    return this.answerService.create(createAnswerDto);
+    return this.answersService.create(createAnswerDto);
   }
 
+  // Obtener todas las respuestas
   @Get()
   findAll() {
-    return this.answerService.findAll();
+    return this.answersService.findAll();
   }
 
+  // Obtener una respuesta por ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.answerService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const answer = await this.answersService.findOne(id);
+    if (!answer) {
+      throw new NotFoundException(`Answer with ID ${id} not found`);
+    }
+    return answer;
   }
 
-  @Patch(':id')
+  // Actualizar una respuesta por ID
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
-    return this.answerService.update(id, updateAnswerDto);
+    return this.answersService.update(id, updateAnswerDto);
   }
 
+  // Eliminar una respuesta por ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.answerService.remove(id);
+  async remove(@Param('id') id: string) {
+    const answer = await this.answersService.remove(id);
+    if (!answer) {
+      throw new NotFoundException(`Answer with ID ${id} not found`);
+    }
+    return { message: `Answer with ID ${id} removed successfully` };
   }
 }
